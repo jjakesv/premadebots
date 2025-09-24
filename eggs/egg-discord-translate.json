@@ -12,7 +12,7 @@
   "docker_images": {
     "Python 3.11": "ghcr.io/ptero-eggs/yolks:python_3.11"
   },
-  "file_denylist": [],
+  "file_denylist": ["bot.py"],
   "startup": "PYTHONPATH=/home/container/.local/lib/python3.11/site-packages python3 /home/container/bot.py {{BOT_TOKEN}}",
   "config": {
     "files": "{}",
