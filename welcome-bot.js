@@ -27,7 +27,7 @@ const SETTINGS_FILE = path.join(__dirname, "settings.json");
 const VERSIONS_URL =
   "https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt";
 const UPDATE_URL = `https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/${BOT_TYPE}`;
-const CURRENT_VER = "1.0.2";
+const CURRENT_VER = "1.0.1";
 
 // Auto-update
 function checkForUpdates() {
@@ -196,7 +196,7 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 // Ready + rotating status
-client.once("ready", async () => {
+client.once("clientReady", async () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
   await registerCommands();
 
