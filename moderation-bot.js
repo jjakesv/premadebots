@@ -9,6 +9,7 @@ const {
 } = require("discord.js");
 const fs = require("fs");
 const https = require("https");
+const path = require("path");
 
 // Token comes from startup args
 const token = process.argv[2];
@@ -17,21 +18,23 @@ if (!token) {
   process.exit(1);
 }
 
-// Versioning info
-const VERSION = "1.0.0"; // bump this whenever you change bot code
+// File + URLs
 const BOT_TYPE = "moderation-bot.js";
+const LOCAL_FILE = path.basename(__filename);
 const VERSIONS_URL =
   "https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt";
 const UPDATE_URL = `https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/${BOT_TYPE}`;
 
-// Check for updates
-function checkForUpdates() {
+// Pull current version from versions.txt by matching our own filename
+function getCurrentVersion() {
   return new Promise((resolve) => {
     https
       .get(VERSIONS_URL, (res) => {
         if (res.statusCode !== 200) {
-          console.log(`⚠️ Failed to check updates. Status: ${res.statusCode}`);
-          return resolve();
+          console.log(
+            `⚠️ Failed to fetch versions.txt. Status: ${res.statusCode}`
+          );
+          return resolve(null);
         }
         let data = "";
         res.on("data", (chunk) => (data += chunk));
@@ -39,49 +42,74 @@ function checkForUpdates() {
           const lines = data.split("\n");
           for (const line of lines) {
             if (line.startsWith(BOT_TYPE)) {
-              const latest = line.split("==")[1].trim();
-              if (latest !== VERSION) {
-                console.log(`⬆️ Update available! ${VERSION} → ${latest}`);
-                console.log("Downloading update...");
-                https
-                  .get(UPDATE_URL, (updateRes) => {
-                    if (updateRes.statusCode !== 200) {
-                      console.log(
-                        `❌ Failed to download update. Status: ${updateRes.statusCode}`
-                      );
-                      return resolve();
-                    }
-                    let newCode = "";
-                    updateRes.on("data", (chunk) => (newCode += chunk));
-                    updateRes.on("end", () => {
-                      fs.writeFileSync(BOT_TYPE, newCode, "utf8");
-                      console.log(
-                        "✅ Update successful. Please restart the bot to apply changes."
-                      );
-                      process.exit(0);
-                    });
-                  })
-                  .on("error", (err) => {
-                    console.log("❌ Error downloading update:", err);
-                  });
-              } else {
-                console.log(`✅ Running latest version (${VERSION}).`);
-              }
-              return resolve();
+              return resolve(line.split("==")[1].trim());
             }
           }
           console.log("⚠️ Bot type not found in versions.txt.");
-          resolve();
+          resolve(null);
         });
       })
       .on("error", (err) => {
-        console.log("❌ Error checking for updates:", err);
+        console.log("❌ Error fetching versions.txt:", err);
+        resolve(null);
+      });
+  });
+}
+
+// Check + apply update
+async function checkForUpdates() {
+  const latest = await getCurrentVersion();
+  if (!latest) return;
+
+  // If local file missing, force download
+  if (!fs.existsSync(LOCAL_FILE)) {
+    console.log("⚠️ Local file missing, downloading fresh copy...");
+    return downloadUpdate(latest);
+  }
+
+  // Read first line of local file to check version marker
+  const localCode = fs.readFileSync(LOCAL_FILE, "utf8");
+  const match = localCode.match(/@version\s+([0-9.]+)/);
+  const localVer = match ? match[1] : "0.0.0";
+
+  if (localVer !== latest) {
+    console.log(`⬆️ Update found: ${localVer} → ${latest}`);
+    return downloadUpdate(latest);
+  } else {
+    console.log(`✅ Running latest version (${localVer}).`);
+  }
+}
+
+function downloadUpdate(newVer) {
+  return new Promise((resolve) => {
+    https
+      .get(UPDATE_URL, (res) => {
+        if (res.statusCode !== 200) {
+          console.log(
+            `❌ Failed to download update. Status: ${res.statusCode}`
+          );
+          return resolve();
+        }
+        let newCode = "";
+        res.on("data", (chunk) => (newCode += chunk));
+        res.on("end", () => {
+          // Inject @version marker so we can read next boot
+          if (!newCode.includes("@version")) {
+            newCode = `// @version ${newVer}\n` + newCode;
+          }
+          fs.writeFileSync(LOCAL_FILE, newCode, "utf8");
+          console.log("✅ Update successful. Restart required.");
+          process.exit(0);
+        });
+      })
+      .on("error", (err) => {
+        console.log("❌ Error downloading update:", err);
         resolve();
       });
   });
 }
 
-// Discord.js setup
+// Discord bot setup
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -159,7 +187,7 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-// Start with update check
+// Boot sequence
 (async () => {
   await checkForUpdates();
   client.login(token);
