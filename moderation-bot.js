@@ -28,7 +28,7 @@ const LOCAL_FILE = path.basename(__filename);
 const VERSIONS_URL =
   "https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt";
 const UPDATE_URL = `https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/${BOT_TYPE}`;
-const CURRENT_VER = "1.0.2";
+const CURRENT_VER = "1.0.3";
 
 // Simple update check (like Translate bot)
 function checkForUpdates() {
@@ -228,7 +228,7 @@ client.on("interactionCreate", async (interaction) => {
       )
         return interaction.reply({
           embeds: [makeEmbed("❌ You don’t got perms.", 0xff0000)],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       if (!target)
         return interaction.reply({
@@ -247,7 +247,7 @@ client.on("interactionCreate", async (interaction) => {
       )
         return interaction.reply({
           embeds: [makeEmbed("❌ You don’t got perms.", 0xff0000)],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       if (!target)
         return interaction.reply({
@@ -266,7 +266,7 @@ client.on("interactionCreate", async (interaction) => {
       )
         return interaction.reply({
           embeds: [makeEmbed("❌ You don’t got perms.", 0xff0000)],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       const userid = interaction.options.getString("userid");
       try {
@@ -288,7 +288,7 @@ client.on("interactionCreate", async (interaction) => {
       )
         return interaction.reply({
           embeds: [makeEmbed("❌ You don’t got perms.", 0xff0000)],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       if (!target)
         return interaction.reply({
@@ -310,7 +310,7 @@ client.on("interactionCreate", async (interaction) => {
       )
         return interaction.reply({
           embeds: [makeEmbed("❌ You don’t got perms.", 0xff0000)],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       if (!target)
         return interaction.reply({
@@ -329,7 +329,7 @@ client.on("interactionCreate", async (interaction) => {
       )
         return interaction.reply({
           embeds: [makeEmbed("❌ You don’t got perms.", 0xff0000)],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       const seconds = interaction.options.getInteger("seconds");
       await interaction.channel.setRateLimitPerUser(seconds);
@@ -345,7 +345,7 @@ client.on("interactionCreate", async (interaction) => {
       )
         return interaction.reply({
           embeds: [makeEmbed("❌ You don’t got perms.", 0xff0000)],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       if (!target)
         return interaction.reply({
@@ -369,7 +369,7 @@ client.on("interactionCreate", async (interaction) => {
       )
         return interaction.reply({
           embeds: [makeEmbed("❌ You don’t got perms.", 0xff0000)],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       const amount = interaction.options.getInteger("amount");
       const fetched = await interaction.channel.messages.fetch({
