@@ -1,17 +1,28 @@
 {
-  "_comment": "Pterodactyl Egg - Moderation Bot",
-  "meta": { "version": "PTDL_v2", "update_url": null },
-  "exported_at": "2025-09-24T06:00:00+00:00",
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2025-09-24T06:30:00+00:00",
   "name": "Discord Moderation Bot",
   "author": "jjakesv870@gmail.com",
-  "description": "Node.js Discord moderation bot with global slash commands. Auto-update enabled with version.txt.",
-  "docker_images": { "NodeJS 20": "ghcr.io/ptero-eggs/yolks:nodejs_20" },
-  "file_denylist": [],
-  "startup": "node bot.js {{BOT_TOKEN}}",
-  "config": { "files": "{}", "startup": "{}", "logs": "{}", "stop": "^^C" },
+  "description": "Node.js Discord moderation bot with global slash commands.",
+  "features": null,
+  "docker_images": {
+    "NodeJS 20": "ghcr.io/ptero-eggs/yolks:nodejs_20"
+  },
+  "file_denylist": [""],
+  "startup": "node /home/container/bot.js {{BOT_TOKEN}}",
+  "config": {
+    "files": "{}",
+    "startup": "{}",
+    "logs": "{}",
+    "stop": "^^C"
+  },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\napt update && apt install -y curl wget\ncd /mnt/server\nnpm install discord.js\nVERSIONS_URL=\"https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt\"\nBOT_FILE=\"moderation-bot.js\"\nLATEST_VER=$(curl -s $VERSIONS_URL | grep \"${BOT_FILE}==\" | cut -d'=' -f3)\n[ -z \"$LATEST_VER\" ] && LATEST_VER=\"1.0.0\"\ncurl -o bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/$BOT_FILE || wget -O bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/$BOT_FILE\necho \"$LATEST_VER\" > version.txt\nexit 0",
+      "script": "#!/bin/bash\r\n# Node.js App Installation Script\r\n#\r\n# Server Files: /mnt/server\r\napt update\r\napt install -y curl wget\r\n\r\nmkdir -p /mnt/server\r\ncd /mnt/server\r\n\r\necho \"Installing required Node.js packages\"\nnpm install discord.js\r\n\r\necho \"Downloading bot.js\"\ncurl -o bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/moderation-bot.js || wget -O bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/moderation-bot.js\r\n\r\necho -e \"Installation complete\"\r\nexit 0",
       "container": "node:20-slim",
       "entrypoint": "bash"
     }
@@ -19,7 +30,7 @@
   "variables": [
     {
       "name": "Discord Bot Token",
-      "description": "Bot token passed to startup",
+      "description": "Get it from discord.com/developers",
       "env_variable": "BOT_TOKEN",
       "default_value": "PUTYOURTOKENHERE",
       "user_viewable": true,
