@@ -16,7 +16,7 @@
   "startup": "node /home/container/bot.js {{BOT_TOKEN}}",
   "config": {
     "files": "{}",
-    "startup": "{}",
+    "startup": "{\r\n    \"done\": [\r\n        \"\"\r\n    ]\r\n}",
     "logs": "{}",
     "stop": "^^C"
   },

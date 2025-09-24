@@ -16,7 +16,7 @@
   "startup": "PYTHONUSERBASE=/home/container/.local python3 /home/container/bot.py {{BOT_TOKEN}}",
   "config": {
     "files": "{}",
-    "startup": "{}",
+    "startup": "{\r\n    \"done\": \"\"\r\n}",
     "logs": "{}",
     "stop": "^^C"
   },
