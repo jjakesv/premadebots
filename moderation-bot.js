@@ -192,7 +192,7 @@ async function registerCommands() {
 }
 
 // Bot ready + status rotation
-client.once("ready", async () => {
+client.once("clientReady", async () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
   await registerCommands();
 
