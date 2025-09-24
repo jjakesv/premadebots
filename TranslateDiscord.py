@@ -4,6 +4,7 @@ import logging
 import sys
 from discord.ext import commands, tasks
 from deep_translator import GoogleTranslator
+from langdetect import detect
 import requests
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -14,7 +15,7 @@ STATUSES = [
     "Made with ❤️ by NJGHosting"
 ]
 
-CURRENT_VERSION = "1.0.2"  # <- update this for each release
+CURRENT_VERSION = "1.0.3"  # <- update this for each release
 
 class TranslateBot:
     def __init__(self, token):
@@ -40,10 +41,10 @@ class TranslateBot:
 
         # Detect language command
         @self.bot.tree.command(name="detect", description="Detect the language of a text")
-        async def detect(interaction: discord.Interaction, text: str):
+        async def detect_lang(interaction: discord.Interaction, text: str):
             await interaction.response.defer()
             try:
-                detected = GoogleTranslator(source='auto', target='en').detect(text)
+                detected = detect(text)
                 embed = discord.Embed(
                     description=f"**Detected language:** {detected}",
                     color=0x00ff00
@@ -58,6 +59,7 @@ class TranslateBot:
                 embed.set_footer(text="Made with ❤️ by NJGHosting")
                 await interaction.followup.send(embed=embed)
                 logger.error(f"Detection error: {e}")
+
 
         # List supported languages command
         @self.bot.tree.command(name="languages", description="List all supported languages")
