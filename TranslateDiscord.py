@@ -14,6 +14,8 @@ STATUSES = [
     "Made with ❤️ by NJGHosting"
 ]
 
+CURRENT_VERSION = "1.0.2"  # <- update this for each release
+
 class TranslateBot:
     def __init__(self, token):
         self.token = token
@@ -124,8 +126,7 @@ def parse_args():
     return parser.parse_args()
 
 def check_for_updates():
-    version = "1.0.2"
-    versionsurl = "https://raw.githubusercontent.com/Silly-Development/premadebots/refs/heads/main/versions.txt"
+    versionsurl = "https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt"
     bottype = "TranslateDiscord.py"
     try:
         response = requests.get(versionsurl)
@@ -134,9 +135,9 @@ def check_for_updates():
             for line in versions:
                 if line.startswith(bottype):
                     latest_version = line.split("==")[1].strip()
-                    if latest_version != version:
+                    if latest_version != CURRENT_VERSION:
                         print(f"A new version ({latest_version}) is available. Updating now...")
-                        updateurl = f"https://raw.githubusercontent.com/Silly-Development/premadebots/refs/heads/main/{bottype}"
+                        updateurl = f"https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/{bottype}"
                         update_response = requests.get(updateurl)
                         if update_response.status_code == 200:
                             with open(bottype, 'w', encoding='utf-8') as f:
@@ -145,7 +146,7 @@ def check_for_updates():
                         else:
                             print(f"❌ Failed to download the update, status code: {update_response.status_code}")
                     else:
-                        print(f"✅ You are using the latest version ({version}).")
+                        print(f"✅ You are using the latest version ({CURRENT_VERSION}).")
                     return
             print("⚠️ Bot type not found in versions file.")
         else:
