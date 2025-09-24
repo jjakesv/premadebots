@@ -4,10 +4,10 @@
     "version": "PTDL_v2",
     "update_url": null
   },
-  "exported_at": "2025-09-24T01:15:00+00:00",
+  "exported_at": "2025-09-24T02:10:00+00:00",
   "name": "Discord Moderation Bot",
   "author": "jjakesv870@gmail.com",
-  "description": "Basic Discord moderation bot in Node.js using global slash commands. Token passed via startup arg.",
+  "description": "Basic Discord moderation bot in Node.js using global slash commands. Token passed via startup arg. Auto-update enabled with dynamic version.txt.",
   "features": null,
   "docker_images": {
     "NodeJS 20": "ghcr.io/ptero-eggs/yolks:nodejs_20"
@@ -22,7 +22,7 @@
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\r\n# Node.js Bot Installation Script\r\n#\r\n# Server Files: /mnt/server\r\napt update\r\napt install -y curl wget\r\n\r\ncd /mnt/server\r\n\r\necho \"Installing required Node.js packages\"\r\nnpm install discord.js\r\n\r\necho \"Downloading bot.js\"\r\ncurl -o bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/moderation-bot.js || wget -O bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/moderation-bot.js\r\n\r\necho -e \"Installation complete\"\r\nexit 0",
+      "script": "#!/bin/bash\n# Node.js Bot Installation Script with dynamic version.txt\n\napt update && apt install -y curl wget\ncd /mnt/server\n\n# Install Node.js packages\necho \"Installing required Node.js packages\"\nnpm install discord.js\n\n# Pull latest version from GitHub\nVERSIONS_URL=\"https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt\"\nBOT_FILE=\"moderation-bot.js\"\nLATEST_VER=$(curl -s $VERSIONS_URL | grep \"${BOT_FILE}==\" | cut -d'=' -f3)\n\nif [ -z \"$LATEST_VER\" ]; then\n  echo \"⚠️ Failed to fetch latest version, defaulting to 1.0.0\"\n  LATEST_VER=\"1.0.0\"\nfi\n\n# Download the bot.js for latest version\necho \"Downloading bot.js version $LATEST_VER\"\ncurl -o bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/$BOT_FILE || wget -O bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/$BOT_FILE\n\n# Save version to version.txt\necho \"$LATEST_VER\" > version.txt\n\n# Done\necho \"Installation complete\"\nexit 0",
       "container": "node:20-slim",
       "entrypoint": "bash"
     }
