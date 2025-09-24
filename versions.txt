@@ -1,1 +1,2 @@
 TranslateDiscord.py == 1.0.0
+moderation-bot.js == 1.0.0
