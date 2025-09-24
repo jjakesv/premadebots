@@ -28,7 +28,7 @@ const LOCAL_FILE = path.basename(__filename);
 const VERSIONS_URL =
   "https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt";
 const UPDATE_URL = `https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/${BOT_TYPE}`;
-const CURRENT_VER = "1.0.1";
+const CURRENT_VER = "1.0.0";
 
 // Simple update check (like Translate bot)
 function checkForUpdates() {
