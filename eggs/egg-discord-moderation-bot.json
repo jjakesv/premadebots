@@ -1,0 +1,42 @@
+{
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2025-09-24T01:15:00+00:00",
+  "name": "Discord Moderation Bot",
+  "author": "jjakesv870@gmail.com",
+  "description": "Basic Discord moderation bot in Node.js using global slash commands. Token passed via startup arg.",
+  "features": null,
+  "docker_images": {
+    "NodeJS 20": "ghcr.io/ptero-eggs/yolks:nodejs_20"
+  },
+  "file_denylist": [],
+  "startup": "node bot.js {{BOT_TOKEN}}",
+  "config": {
+    "files": "{}",
+    "startup": "{}",
+    "logs": "{}",
+    "stop": "^^C"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\r\n# Node.js Bot Installation Script\r\n#\r\n# Server Files: /mnt/server\r\napt update\r\napt install -y curl wget\r\n\r\ncd /mnt/server\r\n\r\necho \"Installing required Node.js packages\"\r\nnpm install discord.js\r\n\r\necho \"Downloading bot.js\"\r\ncurl -o bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/moderation-bot.js || wget -O bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/moderation-bot.js\r\n\r\necho -e \"Installation complete\"\r\nexit 0",
+      "container": "node:20-slim",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Discord Bot Token",
+      "description": "Your Discord bot token (passed to startup as arg).",
+      "env_variable": "BOT_TOKEN",
+      "default_value": "PUTYOURTOKENHERE",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|",
+      "field_type": "text"
+    }
+  ]
+}
