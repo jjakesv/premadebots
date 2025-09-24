@@ -10,7 +10,7 @@
   "description": "Discord bot that translates messages using deep-translator",
   "features": null,
   "docker_images": {
-    "Python 3.13": "ghcr.io/ptero-eggs/yolks:python_3.13"
+    "Python 3.11": "ghcr.io/ptero-eggs/yolks:python_3.11"
   },
   "file_denylist": [],
   "startup": "python3 /home/container/bot.py {{BOT_TOKEN}}",
