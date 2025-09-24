@@ -23,7 +23,7 @@ const SETTINGS_FILE = path.join(__dirname, "settings.json");
 const VERSIONS_URL =
   "https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt";
 const UPDATE_URL = `https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/${BOT_TYPE}`;
-const CURRENT_VER = "1.0.3";
+const CURRENT_VER = "1.0.4";
 
 // Auto-update
 function checkForUpdates() {
@@ -117,7 +117,7 @@ const commands = [
       o.setName("value").setDescription("New value").setRequired(true)
     ),
   new SlashCommandBuilder()
-    .setName("format-help")
+    .setName("help")
     .setDescription("Shows how to format welcome/goodbye messages"),
 ].map((c) => c.toJSON());
 
@@ -127,7 +127,7 @@ async function registerCommands() {
   await rest.put(Routes.applicationCommands(client.user.id), {
     body: commands,
   });
-  console.log("✅ Slash commands registered.");
+  console.log("✅  Slash commands registered.");
 }
 
 // Welcome event with member count
@@ -214,15 +214,36 @@ client.on("interactionCreate", async (interaction) => {
     });
   }
 
-  if (interaction.commandName === "format-help") {
+  if (interaction.commandName === "help") {
+    const guild = interaction.guild;
+    const fakeUser = interaction.user; // example user
+    const icon = guild.iconURL();
+
+    const exampleWelcome = settings.welcomeMessage
+      .replace("{user}", `<@${fakeUser.id}>`)
+      .replace("{server}", guild.name)
+      .replace("{count}", guild.memberCount);
+
+    const exampleGoodbye = settings.goodbyeMessage
+      .replace("{user}", fakeUser.tag)
+      .replace("{server}", guild.name)
+      .replace("{count}", guild.memberCount);
+
     return interaction.reply({
       embeds: [
         makeEmbed(
-          "You can use these placeholders in your messages:\n" +
-            "• {user} → mentions the user\n" +
+          "📘 **Welcome / Goodbye Message Formatting**\n\n" +
+            "You can use these placeholders in your messages:\n" +
+            "• {user} → mentions the user (or username for goodbye)\n" +
             "• {server} → server name\n" +
-            "• {count} → current member count",
-          0x0099ff
+            "• {count} → current member count\n\n" +
+            "**Example Welcome Message:**\n" +
+            exampleWelcome +
+            "\n\n" +
+            "**Example Goodbye Message:**\n" +
+            exampleGoodbye,
+          0x0099ff,
+          icon
         ),
       ],
     });
