@@ -3,7 +3,6 @@ import discord
 import logging
 import sys
 from discord.ext import commands, tasks
-from discord import app_commands
 from deep_translator import GoogleTranslator
 import requests
 
@@ -15,14 +14,15 @@ STATUSES = [
     "Made with ❤️ by NJGHosting"
 ]
 
-SUPPORTED_LANGS = GoogleTranslator.get_supported_languages(as_dict=True)
-
 class TranslateBot:
     def __init__(self, token):
         self.token = token
         intents = discord.Intents.default()
         self.bot = commands.Bot(command_prefix="!", intents=intents)
         self.status_index = 0
+
+        # Create a temporary translator instance to get supported languages
+        self.SUPPORTED_LANGS = GoogleTranslator(source='auto', target='en').get_supported_languages(as_dict=True)
 
         @self.bot.event
         async def on_ready():
@@ -61,7 +61,7 @@ class TranslateBot:
         @self.bot.tree.command(name="languages", description="List all supported languages")
         async def languages(interaction: discord.Interaction):
             await interaction.response.defer()
-            langs = ", ".join([f"{k} ({v})" for k, v in SUPPORTED_LANGS.items()])
+            langs = ", ".join([f"{k} ({v})" for k, v in self.SUPPORTED_LANGS.items()])
             embed = discord.Embed(
                 title="Supported Languages",
                 description=langs,
@@ -73,9 +73,6 @@ class TranslateBot:
         # Multi translation command
         @self.bot.tree.command(name="multi", description="Translate text into multiple languages at once")
         async def multi(interaction: discord.Interaction, text: str, target_langs: str):
-            """
-            target_langs: comma-separated language codes (e.g., 'en,fr,es')
-            """
             await interaction.response.defer()
             codes = [c.strip() for c in target_langs.split(",")]
             results = []
@@ -127,7 +124,7 @@ def parse_args():
     return parser.parse_args()
 
 def check_for_updates():
-    version = "1.0.1"
+    version = "1.0.2"
     versionsurl = "https://raw.githubusercontent.com/Silly-Development/premadebots/refs/heads/main/versions.txt"
     bottype = "TranslateDiscord.py"
     try:
@@ -138,7 +135,7 @@ def check_for_updates():
                 if line.startswith(bottype):
                     latest_version = line.split("==")[1].strip()
                     if latest_version != version:
-                        print(f"A new version ({latest_version}) is available. You are using version {version}. Updating now...")
+                        print(f"A new version ({latest_version}) is available. Updating now...")
                         updateurl = f"https://raw.githubusercontent.com/Silly-Development/premadebots/refs/heads/main/{bottype}"
                         update_response = requests.get(updateurl)
                         if update_response.status_code == 200:
