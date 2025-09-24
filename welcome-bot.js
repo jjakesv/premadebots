@@ -1,5 +1,5 @@
 // bot.js
-// Welcome / Goodbye Bot with external JSON config + /settings command
+// Welcome / Goodbye Bot with external JSON config + /settings & format help
 // Fully DB-free, auto-creates JSON
 
 const {
@@ -27,7 +27,7 @@ const SETTINGS_FILE = path.join(__dirname, "settings.json");
 const VERSIONS_URL =
   "https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt";
 const UPDATE_URL = `https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/${BOT_TYPE}`;
-const CURRENT_VER = "1.0.1";
+const CURRENT_VER = "1.0.2";
 
 // Auto-update
 function checkForUpdates() {
@@ -85,11 +85,13 @@ if (!fs.existsSync(SETTINGS_FILE)) {
 }
 
 // Embed helper
-function makeEmbed(description, color = 0x00ff00) {
-  return new EmbedBuilder()
+function makeEmbed(description, color = 0x00ff00, iconURL = null) {
+  const embed = new EmbedBuilder()
     .setDescription(description)
     .setColor(color)
     .setFooter({ text: "Made with ❤️ by NJGHosting" });
+  if (iconURL) embed.setThumbnail(iconURL);
+  return embed;
 }
 
 // Client
@@ -97,7 +99,7 @@ const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
 });
 
-// Slash command for updating settings
+// Slash commands
 const commands = [
   new SlashCommandBuilder()
     .setName("settings")
@@ -117,6 +119,9 @@ const commands = [
     .addStringOption((o) =>
       o.setName("value").setDescription("New value").setRequired(true)
     ),
+  new SlashCommandBuilder()
+    .setName("format-help")
+    .setDescription("Shows how to format welcome/goodbye messages"),
 ].map((c) => c.toJSON());
 
 // Register commands
@@ -132,12 +137,15 @@ async function registerCommands() {
 client.on("guildMemberAdd", (member) => {
   const channel = member.guild.channels.cache.get(settings.welcomeChannelId);
   if (!channel) return;
+  const icon = member.guild.iconURL();
   channel.send({
     embeds: [
       makeEmbed(
         settings.welcomeMessage
           .replace("{user}", `<@${member.id}>`)
-          .replace("{server}", member.guild.name)
+          .replace("{server}", member.guild.name),
+        0x00ff00,
+        icon
       ),
     ],
   });
@@ -147,12 +155,15 @@ client.on("guildMemberAdd", (member) => {
 client.on("guildMemberRemove", (member) => {
   const channel = member.guild.channels.cache.get(settings.goodbyeChannelId);
   if (!channel) return;
+  const icon = member.guild.iconURL();
   channel.send({
     embeds: [
       makeEmbed(
         settings.goodbyeMessage
           .replace("{user}", member.user.tag)
-          .replace("{server}", member.guild.name)
+          .replace("{server}", member.guild.name),
+        0xff0000,
+        icon
       ),
     ],
   });
@@ -161,17 +172,17 @@ client.on("guildMemberRemove", (member) => {
 // Interaction handler
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
+
   if (interaction.commandName === "settings") {
     if (
       !interaction.member.permissions.has(
         PermissionsBitField.Flags.Administrator
       )
-    ) {
+    )
       return interaction.reply({
         embeds: [makeEmbed("❌ You need admin perms.", 0xff0000)],
         ephemeral: true,
       });
-    }
 
     const option = interaction.options.getString("option");
     const value = interaction.options.getString("value");
@@ -186,12 +197,21 @@ client.on("interactionCreate", async (interaction) => {
           ephemeral: true,
         });
       settings[option] = ch.id;
-    } else {
-      settings[option] = value;
-    }
+    } else settings[option] = value;
 
     fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2));
     return interaction.reply({ embeds: [makeEmbed(`✅ Updated ${option}`)] });
+  }
+
+  if (interaction.commandName === "format-help") {
+    return interaction.reply({
+      embeds: [
+        makeEmbed(
+          "You can use these placeholders in your messages:\n• {user} → mentions the user\n• {server} → server name",
+          0x0099ff
+        ),
+      ],
+    });
   }
 });
 
