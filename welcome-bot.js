@@ -1,7 +1,3 @@
-// bot.js
-// Welcome / Goodbye Bot with external JSON config + /settings & format help
-// Fully DB-free, auto-creates JSON
-
 const {
   Client,
   GatewayIntentBits,
@@ -27,7 +23,7 @@ const SETTINGS_FILE = path.join(__dirname, "settings.json");
 const VERSIONS_URL =
   "https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt";
 const UPDATE_URL = `https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/${BOT_TYPE}`;
-const CURRENT_VER = "1.0.2";
+const CURRENT_VER = "1.0.3";
 
 // Auto-update
 function checkForUpdates() {
@@ -76,7 +72,8 @@ if (!fs.existsSync(SETTINGS_FILE)) {
   settings = {
     welcomeChannelId: "",
     goodbyeChannelId: "",
-    welcomeMessage: "Yo {user}, welcome to {server}! 🔥",
+    welcomeMessage:
+      "Yo {user}, welcome to {server}! You are member #{count}! 🔥",
     goodbyeMessage: "Sad to see you go, {user}! 😢",
   };
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2));
@@ -133,17 +130,19 @@ async function registerCommands() {
   console.log("✅ Slash commands registered.");
 }
 
-// Welcome event
+// Welcome event with member count
 client.on("guildMemberAdd", (member) => {
   const channel = member.guild.channels.cache.get(settings.welcomeChannelId);
   if (!channel) return;
   const icon = member.guild.iconURL();
+  const memberCount = member.guild.memberCount; // Current total members
   channel.send({
     embeds: [
       makeEmbed(
         settings.welcomeMessage
           .replace("{user}", `<@${member.id}>`)
-          .replace("{server}", member.guild.name),
+          .replace("{server}", member.guild.name)
+          .replace("{count}", memberCount), // <-- new replacement
         0x00ff00,
         icon
       ),
@@ -200,14 +199,29 @@ client.on("interactionCreate", async (interaction) => {
     } else settings[option] = value;
 
     fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2));
-    return interaction.reply({ embeds: [makeEmbed(`✅ Updated ${option}`)] });
+
+    // NEW: Notify user and console about restart requirement
+    console.log(
+      `⚠️ Settings updated: ${option}. Please restart the bot/server to apply changes.`
+    );
+    return interaction.reply({
+      embeds: [
+        makeEmbed(
+          `✅ Updated ${option}!\n⚠️ Please restart the bot/server for changes to take effect.`,
+          0x00ff00
+        ),
+      ],
+    });
   }
 
   if (interaction.commandName === "format-help") {
     return interaction.reply({
       embeds: [
         makeEmbed(
-          "You can use these placeholders in your messages:\n• {user} → mentions the user\n• {server} → server name",
+          "You can use these placeholders in your messages:\n" +
+            "• {user} → mentions the user\n" +
+            "• {server} → server name\n" +
+            "• {count} → current member count",
           0x0099ff
         ),
       ],
