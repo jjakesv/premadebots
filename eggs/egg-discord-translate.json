@@ -6,7 +6,7 @@
   },
   "exported_at": "2025-09-23T22:00:00+01:00",
   "name": "Discord Translate",
-  "author": "NJGHosting",
+  "author": "jjakesv870@gmail.com",
   "description": "Discord bot that translates messages using deep-translator",
   "features": null,
   "docker_images": {
