@@ -140,9 +140,10 @@ def check_for_updates():
                         updateurl = f"https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/{bottype}"
                         update_response = requests.get(updateurl)
                         if update_response.status_code == 200:
-                            with open(bottype, 'w', encoding='utf-8') as f:
+                            # Save directly to the running bot file
+                            with open("/home/container/bot.py", 'w', encoding='utf-8') as f:
                                 f.write(update_response.text)
-                            print("✅ Update successful. Restart the bot to apply changes.")
+                            print("✅ Update successful. Restart the server to apply changes.")
                         else:
                             print(f"❌ Failed to download the update, status code: {update_response.status_code}")
                     else:
