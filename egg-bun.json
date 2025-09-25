@@ -1,0 +1,123 @@
+{
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY Jexactyl PANEL - jexactyl.com",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2025-09-25T20:30:37+00:00",
+  "name": "Bun",
+  "author": "jjakesv870@gmail.com",
+  "description": "Bun is an incredibly fast JavaScript runtime, transpiler bundler, and npm package manager all-in-one.",
+  "features": null,
+  "docker_images": {
+    "Bun Latest": "ghcr.io/jjakesv/yolks:bun_latest",
+    "Bun Canary": "ghcr.io/jjakesv/yolks:bun_canary"
+  },
+  "file_denylist": [],
+  "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; if [[ ! -z ${BUN_PACKAGES} ]]; then bun install ${BUN_PACKAGES}; fi; if [[ ! -z ${RMBUN_PACKAGES} ]]; then bun remove ${RMBUN_PACKAGES}; fi; if [[ -f /home/container/package.json ]]; then bun install; fi; bun run {{MAIN_FILE}}",
+  "config": {
+    "files": "{}",
+    "startup": "{\r\n    \"done\": [\r\n        \"\"\r\n    ]\r\n}",
+    "logs": "{}",
+    "stop": "^^C"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\n# Bun App Installation Script\napt update && apt install -y git curl jq file unzip make gcc g++ python python-dev libtool\nmkdir -p /mnt/server && cd /mnt/server\n\nif [[ \"${USER_UPLOAD}\" == \"true\" || \"${USER_UPLOAD}\" == \"1\" ]]; then\n    echo \"☝️ User-uploaded files detected. Skipping installation steps.\"\n    exit 0\nfi\n\nif [[ ${GIT_ADDRESS} != *.git ]]; then\n    GIT_ADDRESS=${GIT_ADDRESS}.git\nfi\n\nif [[ -n ${USERNAME} && -n ${ACCESS_TOKEN} ]]; then\n    GIT_ADDRESS=\"https://${USERNAME}:${ACCESS_TOKEN}@$(echo ${GIT_ADDRESS} | cut -d/ -f3-)\"\nelse\n    echo \"Using anonymous Git access\"\nfi\n\nif [[ $(ls -A /mnt/server) ]]; then\n    if [[ -d .git && -f .git/config ]]; then\n        ORIGIN=$(git config --get remote.origin.url)\n        if [[ \"${ORIGIN}\" == \"${GIT_ADDRESS}\" ]]; then git pull; fi\n    else\n        echo \"/mnt/server not empty, skipping clone to avoid breakage\"\n    fi\nelse\n    if [[ -z ${BRANCH} ]]; then git clone ${GIT_ADDRESS} .; else git clone --single-branch --branch ${BRANCH} ${GIT_ADDRESS} .; fi\nfi\n\nif [[ -n ${BUN_PACKAGES} ]]; then bun install ${BUN_PACKAGES}; fi\nif [[ -f /mnt/server/package.json ]]; then bun install --production; fi\n\necho \"-----------------------------------------\"\necho \"Installation completed...\"\necho \"-----------------------------------------\"",
+      "container": "ghcr.io/jjakesv/installers:debian",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Git Repository Address",
+      "description": "The Git repository address to clone.",
+      "env_variable": "GIT_ADDRESS",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    },
+    {
+      "name": "User Uploaded Files",
+      "description": "Skip all the install stuff if you are letting a user upload files.\n0 = false (default)\n1 = true",
+      "env_variable": "USER_UPLOAD",
+      "default_value": "0",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|boolean",
+      "field_type": "text"
+    },
+    {
+      "name": "Auto Update",
+      "description": "Pull the latest files on startup when using a Git Repository.\n0 = false (default)\n1 = true",
+      "env_variable": "AUTO_UPDATE",
+      "default_value": "0",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|boolean",
+      "field_type": "text"
+    },
+    {
+      "name": "Main file",
+      "description": "The main file passed to the bun run command",
+      "env_variable": "MAIN_FILE",
+      "default_value": "index.js",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Additional Bun Packages",
+      "description": "Install additional bun packages. Use spaces to separate",
+      "env_variable": "BUN_PACKAGES",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Uninstall Bun Packages",
+      "description": "Uninstall bun packages. Use spaces to separate",
+      "env_variable": "RMBUN_PACKAGES",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Git Branch",
+      "description": "The Git branch to install.",
+      "env_variable": "BRANCH",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Git Username",
+      "description": "Git username for authentication.",
+      "env_variable": "USERNAME",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Git Access Token",
+      "description": "Git access token for authentication.",
+      "env_variable": "ACCESS_TOKEN",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    }
+  ]
+}

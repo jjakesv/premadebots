@@ -1,0 +1,42 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY Jexactyl PANEL - jexactyl.com",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2025-09-25T20:30:38+00:00",
+    "name": "C#",
+    "author": "doge@chiragdev.xyz",
+    "description": "Just a normal pterodactyl egg to run C# apps",
+    "features": null,
+    "docker_images": {
+        "quay.io\/chirag350\/csharp-egg": "quay.io\/chirag350\/csharp-egg"
+    },
+    "file_denylist": [],
+    "startup": "dotnet ${STARTUP_PARAM}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\r\necho \"Hello\"",
+            "container": "debian:bullseye-slim",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Startup Param",
+            "description": "",
+            "env_variable": "STARTUP_PARAM",
+            "default_value": "run",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:200",
+            "field_type": "text"
+        }
+    ]
+}
