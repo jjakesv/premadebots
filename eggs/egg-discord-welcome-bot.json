@@ -6,7 +6,7 @@
   "author": "jjakesv870@gmail.com",
   "description": "Node.js Discord bot that sends welcome & goodbye messages with embeds.",
   "features": null,
-  "docker_images": { "NodeJS 20": "ghcr.io/ptero-eggs/yolks:nodejs_20" },
+  "docker_images": { "NodeJS 20": "ghcr.io/jjakesv/yolks:nodejs_20" },
   "file_denylist": [""],
   "startup": "node /home/container/bot.js {{BOT_TOKEN}}",
   "config": {
