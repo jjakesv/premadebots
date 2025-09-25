@@ -1,0 +1,41 @@
+{
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY Jexactyl PANEL - jexactyl.com",
+  "meta": { "version": "PTDL_v2", "update_url": null },
+  "exported_at": "2025-09-25T20:25:00+00:00",
+  "name": "Python Custom Start",
+  "author": "jjakesv870@gmail.com",
+  "description": "This allows you to edit the start script for Python\r\n[ONLY USE IF YOU ARE EXPERIENCED AND KNOW WHAT YOUR DOING!!]",
+  "features": null,
+  "docker_images": {
+    "Python 3.13": "ghcr.io/jjakesv/yolks:python_3.13",
+    "Python 3.12": "ghcr.io/jjakesv/yolks:python_3.12",
+    "Python 3.11": "ghcr.io/jjakesv/yolks:python_3.11"
+  },
+  "file_denylist": [],
+  "startup": "{{STARTUPCOMMAND}}",
+  "config": {
+    "files": "{}",
+    "startup": "{\r\n    \"done\": \"\"\r\n}",
+    "logs": "{}",
+    "stop": "^C"
+  },
+  "scripts": {
+    "installation": {
+      "script": null,
+      "container": "ghcr.io/jjakesv/yolks:python_3.13",
+      "entrypoint": "ash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Startup Command",
+      "description": "",
+      "env_variable": "STARTUPCOMMAND",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    }
+  ]
+}
