@@ -23,7 +23,7 @@ const SETTINGS_FILE = path.join(__dirname, "settings.json");
 const VERSIONS_URL =
   "https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt";
 const UPDATE_URL = `https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/${BOT_TYPE}`;
-const CURRENT_VER = "1.0.4";
+const CURRENT_VER = "1.0.5";
 
 // Auto-update
 function checkForUpdates() {
@@ -81,12 +81,13 @@ if (!fs.existsSync(SETTINGS_FILE)) {
   settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, "utf8"));
 }
 
-// Embed helper
+// Embed helper with timestamp
 function makeEmbed(description, color = 0x00ff00, iconURL = null) {
   const embed = new EmbedBuilder()
     .setDescription(description)
     .setColor(color)
-    .setFooter({ text: "Made with ❤️ by NJGHosting" });
+    .setFooter({ text: "Made with ❤️ by NJGHosting" })
+    .setTimestamp(); // <-- adds current timestamp to embed
   if (iconURL) embed.setThumbnail(iconURL);
   return embed;
 }
