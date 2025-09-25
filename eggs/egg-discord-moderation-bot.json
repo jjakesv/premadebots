@@ -10,7 +10,7 @@
   "description": "Node.js Discord moderation bot with global slash commands.",
   "features": null,
   "docker_images": {
-    "NodeJS 20": "ghcr.io/jjakesv/yolks:nodejs_20"
+    "NodeJS 20": "ghcr.io/ptero-eggs/yolks:nodejs_20"
   },
   "file_denylist": [""],
   "startup": "node /home/container/bot.js {{BOT_TOKEN}}",
