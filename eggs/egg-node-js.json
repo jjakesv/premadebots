@@ -7,6 +7,7 @@
   "description": "a generic node.js egg\r\n\r\nThis will clone a git repo. it defaults to master if no branch is specified.\r\n\r\nInstalls the node_modules on install. If you set user_upload then I assume you know what you are doing.",
   "features": null,
   "docker_images": {
+    "Nodejs 24": "ghcr.io/jjakesv/yolks:nodejs_24",
     "Nodejs 22": "ghcr.io/jjakesv/yolks:nodejs_22",
     "Nodejs 20": "ghcr.io/jjakesv/yolks:nodejs_20",
     "Nodejs 18": "ghcr.io/jjakesv/yolks:nodejs_18",
@@ -15,7 +16,7 @@
     "Nodejs 12": "ghcr.io/jjakesv/yolks:nodejs_12"
   },
   "file_denylist": [],
-  "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; if [[ ! -z ${NODE_PACKAGES} ]]; then /usr/local/bin/npm install ${NODE_PACKAGES}; fi; if [[ ! -z ${UNNODE_PACKAGES} ]]; then /usr/local/bin/npm uninstall ${UNNODE_PACKAGES}; fi; if [ -f /home/container/package.json ]; then /usr/local/bin/npm install; fi; if [[ \"${MAIN_FILE}\" == \"*.js\" ]]; then /usr/local/bin/node \"/home/container/${MAIN_FILE}\" ${NODE_ARGS}; else /usr/local/bin/ts-node --esm \"/home/container/${MAIN_FILE}\" ${NODE_ARGS}; fi",
+  "startup": "if [ -d .git ] && [ \"{{AUTO_UPDATE}}\" = \"1\" ]; then git pull; fi; if [ -n \"${NODE_PACKAGES}\" ]; then /usr/local/bin/npm install ${NODE_PACKAGES}; fi; if [ -n \"${UNNODE_PACKAGES}\" ]; then /usr/local/bin/npm uninstall ${UNNODE_PACKAGES}; fi; if [ -f /home/container/package.json ]; then /usr/local/bin/npm install; fi; case \"${MAIN_FILE}\" in *.js) /usr/local/bin/node \"/home/container/${MAIN_FILE}\" ${NODE_ARGS} ;; *) /usr/local/bin/ts-node --esm \"/home/container/${MAIN_FILE}\" ${NODE_ARGS} ;; esac",
   "config": {
     "files": "{}",
     "startup": "{\r\n    \"done\": [\r\n        \"\"\r\n    ]\r\n}",
@@ -24,7 +25,7 @@
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\r\n# NodeJS App Installation Script\r\napt update && apt install -y git curl jq file unzip make gcc g++ python3 python3-dev python3-pip libtool\r\nnpm install npm@latest --location=global\r\nmkdir -p /mnt/server && cd /mnt/server\r\nif [ \"${USER_UPLOAD}\" == \"true\" ] || [ \"${USER_UPLOAD}\" == \"1\" ]; then echo \"assuming user knows what they are doing\"; exit 0; fi\r\nif [[ ${GIT_ADDRESS} != *.git ]]; then GIT_ADDRESS=${GIT_ADDRESS}.git; fi\r\nif [ -n \"${USERNAME}\" ] || [ -n \"${ACCESS_TOKEN}\" ]; then GIT_ADDRESS=\"https://${USERNAME}:${ACCESS_TOKEN}@$(echo ${GIT_ADDRESS} | cut -d/ -f3-)\"; fi\r\nif [ \"$(ls -A /mnt/server)\" ]; then ORIGIN=$(git config --get remote.origin.url 2>/dev/null || echo \"\"); if [ \"${ORIGIN}\" == \"${GIT_ADDRESS}\" ]; then git pull; fi; else if [ -z ${BRANCH} ]; then git clone ${GIT_ADDRESS} .; else git clone --single-branch --branch ${BRANCH} ${GIT_ADDRESS} .; fi; fi\r\nif [[ ! -z ${NODE_PACKAGES} ]]; then /usr/local/bin/npm install ${NODE_PACKAGES}; fi\r\nif [ -f /mnt/server/package.json ]; then /usr/local/bin/npm install --production; fi\r\necho \"install complete\"\r\nexit 0",
+      "script": "#!/bin/bash\r\n# NodeJS App Installation Script\r\napt update && apt install -y git curl jq file unzip make gcc g++ python3 python3-dev python3-pip libtool\r\nnpm install npm@latest --location=global\r\nmkdir -p /mnt/server && cd /mnt/server\r\nif [ \"${USER_UPLOAD}\" = \"true\" ] || [ \"${USER_UPLOAD}\" = \"1\" ]; then echo \"assuming user knows what they are doing\"; exit 0; fi\r\nif [[ ${GIT_ADDRESS} != *.git ]]; then GIT_ADDRESS=${GIT_ADDRESS}.git; fi\r\nif [ -n \"${USERNAME}\" ] || [ -n \"${ACCESS_TOKEN}\" ]; then GIT_ADDRESS=\"https://${USERNAME}:${ACCESS_TOKEN}@$(echo ${GIT_ADDRESS} | cut -d/ -f3-)\"; fi\r\nif [ \"$(ls -A /mnt/server)\" ]; then ORIGIN=$(git config --get remote.origin.url 2>/dev/null || echo \"\"); if [ \"${ORIGIN}\" = \"${GIT_ADDRESS}\" ]; then git pull; fi; else if [ -z ${BRANCH} ]; then git clone ${GIT_ADDRESS} .; else git clone --single-branch --branch ${BRANCH} ${GIT_ADDRESS} .; fi; fi\r\nif [ -n \"${NODE_PACKAGES}\" ]; then /usr/local/bin/npm install ${NODE_PACKAGES}; fi\r\nif [ -f /mnt/server/package.json ]; then /usr/local/bin/npm install --production; fi\r\necho \"install complete\"\r\nexit 0",
       "container": "ghcr.io/jjakesv/yolks:nodejs_22",
       "entrypoint": "bash"
     }
