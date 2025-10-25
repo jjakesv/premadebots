@@ -26,7 +26,7 @@ const LOCAL_FILE = path.basename(__filename);
 const VERSIONS_URL =
   "https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt";
 const UPDATE_URL = `https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/${BOT_TYPE}`;
-const CURRENT_VER = "1.0.1";
+const CURRENT_VER = "1.0.2";
 
 // --- Safe Auto-updater ---
 function checkForUpdates() {
@@ -139,7 +139,7 @@ async function registerCommands() {
 }
 
 // --- Bot Ready ---
-client.once("ready", async () => {
+client.once("clientReady", async () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
   await registerCommands();
 
