@@ -26,21 +26,29 @@ const LOCAL_FILE = path.basename(__filename);
 const VERSIONS_URL =
   "https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/versions.txt";
 const UPDATE_URL = `https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/${BOT_TYPE}`;
-const CURRENT_VER = "1.0.0";
+const CURRENT_VER = "1.0.1";
 
-// --- Auto-updater ---
+// --- Safe Auto-updater ---
 function checkForUpdates() {
   https
     .get(VERSIONS_URL, (res) => {
       if (res.statusCode !== 200)
-        return console.log("⚠️ Failed to check updates.");
+        return console.log("⚠️ Failed to check updates (bad status code).");
       let data = "";
       res.on("data", (chunk) => (data += chunk));
       res.on("end", () => {
-        const lines = data.split("\n");
+        const lines = data
+          .split("\n")
+          .map((l) => l.trim())
+          .filter((l) => l.length > 0 && !l.startsWith("#"));
+
+        let found = false;
         for (const line of lines) {
-          if (line.startsWith(BOT_TYPE)) {
-            const latestVer = line.split("==")[1].trim();
+          const [name, version] = line.split("==");
+          if (!name || !version) continue;
+          if (name.trim() === BOT_TYPE) {
+            found = true;
+            const latestVer = version.trim();
             if (latestVer !== CURRENT_VER) {
               console.log(
                 `⬆️ Update available: ${CURRENT_VER} → ${latestVer}. Downloading...`
@@ -63,13 +71,17 @@ function checkForUpdates() {
             } else {
               console.log(`✅ Running latest version (${CURRENT_VER}).`);
             }
-            return;
+            break;
           }
         }
-        console.log("⚠️ Bot type not found in versions file.");
+
+        if (!found)
+          console.log("⚠️ Bot type not found in versions file on GitHub.");
       });
     })
-    .on("error", console.error);
+    .on("error", (err) => {
+      console.log("⚠️ Failed to check updates:", err.message);
+    });
 }
 checkForUpdates();
 
@@ -193,7 +205,6 @@ client.on("messageDelete", async (message) => {
     });
   }
 
-  // Send with optional extra attachments
   if (files.length > 0) {
     embed.addFields({
       name: "📎 Attachments",
