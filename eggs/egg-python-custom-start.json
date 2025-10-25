@@ -22,7 +22,7 @@
   "scripts": {
     "installation": {
       "script": null,
-      "container": "ghcr.io/jjakesv/yolks:python_3.13",
+      "container": "python:3.11-slim",
       "entrypoint": "ash"
     }
   },
