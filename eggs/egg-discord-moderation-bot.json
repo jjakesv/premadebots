@@ -11,14 +11,14 @@
   "startup": "node /home/container/bot.js {{BOT_TOKEN}}",
   "config": {
     "files": "{}",
-    "startup": "{\r\n    \"done\": [\"\"\r\n    ]\r\n}",
+    "startup": "{\r\n    \"done\": [\"bot is ready\"]\r\n}",
     "logs": "{}",
     "stop": "^C"
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\napt update\napt install -y curl wget\nmkdir -p /mnt/server\ncd /mnt/server\necho \"Installing Node.js packages\"\nnpm install discord.js\ncurl -o bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/moderation-bot.js || wget -O bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/moderation-bot.js\necho \"Installation complete\"\nexit 0",
-      "container": "ghcr.io/jjakesv/yolks:nodejs_20",
+      "script": "#!/bin/bash\napt update -y && apt install -y curl wget\nnpm install discord.js\ncurl -fsSL -o bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/moderation-bot.js || wget -O bot.js https://raw.githubusercontent.com/jjakesv/premadebots/refs/heads/main/moderation-bot.js\necho \"Installation complete. You can now start your server!\"\nexit 0",
+      "container": "node:18-bookworm-slim",
       "entrypoint": "bash"
     }
   },
