@@ -1,62 +1,62 @@
 {
-    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY Jexactyl PANEL - jexactyl.com",
-    "meta": {
-        "version": "PTDL_v2",
-        "update_url": null
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY Jexactyl PANEL - jexactyl.com",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2025-10-26T16:49:01+00:00",
+  "name": "Discord Welcome Bot V2",
+  "author": "jjakesv870@gmail.com",
+  "description": "Node.js Discord bot that sends welcome & goodbye messages with embeds. Automatically pulls the latest version from GitHub on reinstall.",
+  "features": null,
+  "docker_images": {
+    "NodeJS 20": "ghcr.io/jjakesv/yolks:nodejs_20"
+  },
+  "file_denylist": [],
+  "startup": "node /home/container/index.js {{BOT_TOKEN}} {{BOT_ID}} {{MONGODB_URI}}",
+  "config": {
+    "files": "{}",
+    "startup": "{\r\n    \"done\": [\"Bot Online\"]\r\n}",
+    "logs": "{}",
+    "stop": "^C"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\napt update -y\napt install -y curl wget git\n\n# Go to server directory\ncd /mnt/server\n\n# ⚠️ DELETE EVERYTHING FIRST\nrm -rf ./* .[^.]* || true\n\n# Clone fresh copy of your GitHub repo\necho \"Cloning latest Welcome-BotV2 repo...\"\ngit clone https://github.com/jjakesv/Welcome-BotV2.git .\n\n# Install Node dependencies\necho \"Installing dependencies...\"\nnpm install --production || npm install\n\necho \"✅ Installation complete!\"\nexit 0",
+      "container": "node:20-bookworm-slim",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Discord Bot Token",
+      "description": "Your bot token from https://discord.com/developers",
+      "env_variable": "BOT_TOKEN",
+      "default_value": "PUTYOURTOKENHERE",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|",
+      "field_type": "text"
     },
-    "exported_at": "2025-10-26T16:49:01+00:00",
-    "name": "Discord Welcome Bot V2",
-    "author": "jjakesv870@gmail.com",
-    "description": "Node.js Discord bot that sends welcome & goodbye messages with embeds. Automatically pulls latest version from GitHub.",
-    "features": null,
-    "docker_images": {
-        "NodeJS 20": "ghcr.io\/jjakesv\/yolks:nodejs_20"
+    {
+      "name": "Discord Bot Client ID",
+      "description": "Your bot's client ID from the Discord Developer Portal",
+      "env_variable": "BOT_ID",
+      "default_value": "PUTYOURCLIENTIDHERE",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|",
+      "field_type": "text"
     },
-    "file_denylist": [],
-    "startup": "node \/home\/container\/index.js {{BOT_TOKEN}} {{BOT_ID}} {{MONGODB_URI}}",
-    "config": {
-        "files": "{}",
-        "startup": "{\r\n    \"done\": [\r\n        \"Bot Online\"\r\n    ]\r\n}",
-        "logs": "{}",
-        "stop": "^C"
-    },
-    "scripts": {
-        "installation": {
-            "script": "#!\/bin\/bash\napt update -y\napt install -y curl wget git\nmkdir -p \/mnt\/server\ncd \/mnt\/server\n\n# Clone repo\nif [ -d \".git\" ]; then\n  echo \"Updating existing repo...\"\n  git pull\nelse\n  echo \"Cloning bot repo...\"\n  git clone https:\/\/github.com\/jjakesv\/Welcome-BotV2.git .\nfi\n\n# Install dependencies\necho \"Installing dependencies...\"\nnpm install --production || npm install\n\necho \"\u2705 Installation complete!\"\nexit 0",
-            "container": "node:20-bookworm-slim",
-            "entrypoint": "bash"
-        }
-    },
-    "variables": [
-        {
-            "name": "Discord Bot Token",
-            "description": "Your bot token from https:\/\/discord.com\/developers",
-            "env_variable": "BOT_TOKEN",
-            "default_value": "PUTYOURTOKENHERE",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|",
-            "field_type": "text"
-        },
-        {
-            "name": "Discord Bot Client ID",
-            "description": "Your bot's client ID from the Discord Developer Portal",
-            "env_variable": "BOT_ID",
-            "default_value": "PUTYOURCLIENTIDHERE",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|",
-            "field_type": "text"
-        },
-        {
-            "name": "MongoDB Connection URI",
-            "description": "Your MongoDB connection URI (from MongoDB Atlas or your own server)",
-            "env_variable": "MONGODB_URI",
-            "default_value": "PUTYOURMONGODBURIHERE",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|",
-            "field_type": "text"
-        }
-    ]
+    {
+      "name": "MongoDB Connection URI",
+      "description": "Your MongoDB connection URI (from MongoDB Atlas or your own server)",
+      "env_variable": "MONGODB_URI",
+      "default_value": "PUTYOURMONGODBURIHERE",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|",
+      "field_type": "text"
+    }
+  ]
 }
